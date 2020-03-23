@@ -10,7 +10,6 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content="Genetic Phenotype EHR doc2hpo">
 <meta name="author"
