@@ -2,10 +2,14 @@ package edu.columbia.dbmi.doc2hpo.service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 
 import edu.columbia.dbmi.doc2hpo.pojo.ParsingResults;
@@ -16,15 +20,22 @@ public class HpoCleaner {
 	
 	public HpoCleaner() {
 		this.hpSet = new HashSet<String>();
-		File phenotypeFile = null;
+//		File phenotypeFile = null;
+//		try {
+//			phenotypeFile = ResourceUtils.getFile("classpath:dictionary/hp.medlee.HP_0000118.txt");
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		String cleandic = phenotypeFile.toString();
+//		String content = FileUtil.Readfile(cleandic);
+		ClassPathResource cpr = new ClassPathResource("dictionary/hp.medlee.HP_0000118.txt");
+		String content = null;
 		try {
-			phenotypeFile = ResourceUtils.getFile("classpath:dictionary/hp.medlee.HP_0000118.txt");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			content = new String(FileCopyUtils.copyToByteArray(cpr.getInputStream()), StandardCharsets.UTF_8);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		String cleandic = phenotypeFile.toString();
-		String content = FileUtil.Readfile(cleandic);
 		String[] keyArray = content.split("\n");
 		for (String key : keyArray) {
 			String[] t = key.split("\t");

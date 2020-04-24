@@ -1,9 +1,12 @@
 package edu.columbia.dbmi.doc2hpo.util;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 
 import java.io.*;
@@ -15,9 +18,16 @@ public class NegUtil {
 	public NegUtil() throws FileNotFoundException {
 		// String content =
 		// FileHelper.ReadClasspathfile(GlobalSetting.negatemodel);
-		File negFile = ResourceUtils.getFile("classpath:dictionary/negex_triggers.txt");
-		String negPath = negFile.toString();
-		String content=FileUtil.Readfile(negPath);
+//		File negFile = ResourceUtils.getFile("classpath:dictionary/negex_triggers.txt");
+//		String negPath = negFile.toString();
+//		String content=FileUtil.Readfile(negPath);
+		ClassPathResource cpr = new ClassPathResource("dictionary/negex_triggers.txt");
+		String content = null;
+		try {
+			content = new String(FileCopyUtils.copyToByteArray(cpr.getInputStream()), StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		String[] allr=content.split("\n");
 		for (String rl : allr) {
 			rules.add(rl);

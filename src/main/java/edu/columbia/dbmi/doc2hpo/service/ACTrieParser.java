@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,8 +14,12 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.log4j.Logger;
+import org.apache.lucene.analysis.util.ClasspathResourceLoader;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
@@ -41,9 +46,11 @@ public class ACTrieParser {
 	public ACTrieParser() throws FileNotFoundException {
 		try {
 			TreeMap<String, String> map = new TreeMap<String, String>();
-			File hpoTermFile = ResourceUtils.getFile("classpath:dictionary/hpoterms.txt");
-			String cleandic = hpoTermFile.toString();
-			String content = FileUtil.Readfile(cleandic);
+//			File hpoTermFile = ResourceUtils.getFile("classpath:dictionary/hpoterms.txt");
+//			String cleandic = hpoTermFile.toString();
+//			String content = FileUtil.Readfile(cleandic);
+			ClassPathResource cpr = new ClassPathResource("dictionary/hpoterms.txt");
+			String content = new String(FileCopyUtils.copyToByteArray(cpr.getInputStream()), StandardCharsets.UTF_8);
 			String[] keyArray = content.split("\n");
 			for (String key : keyArray) {
 				String[] t = key.split("\t");
@@ -67,10 +74,14 @@ public class ACTrieParser {
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		ACTrieParser rbp = new ACTrieParser();
-////		String content=FileUtil.Readfile(args[0]);
-//		String content = "He denies synophrys. Individual II-1 is a 10 year old boy. He was born at term with normal birth parameters and good APGAR scores (9/10/10). The neonatal period was uneventful, and he had normal motor development during early childhood: he began to look up at 3 months, sit by himself at 5 months, stand up at 11 months, walk at 13 months, and speak at 17 months. He attended a regular kindergarten, without any signs of difference in intelligence, compared to his peers. Starting at age 6, the parents observed ever increasing behavioral disturbance for the boy, manifesting in multiple aspects of life. For example, he can no longer wear clothes by himself, cannot obey instruction from parents/teachers, can no longer hold subjects tightly in hand, which were all things that he could do before 6 years of age. In addition, he no longer liked to play with others; instead, he just preferred to stay by himself, and he sometimes fell down when he walked on the stairs, which had rarely happened at age 5. The proband continued to deteriorate: at age 9, he could not say a single word and had no action or response to any instruction given in clinical exams. Additionally, rough facial features were noted with a flat nasal bridge, a synophrys (unibrow), a long and smooth philtrum, thick lips and an enlarged mouth. He also had rib edge eversion, and it was also discovered that he was profoundly deaf and had completely lost the ability to speak. He also had loss of bladder control. The diagnosis of severe intellectual disability was made, based on Wechsler Intelligence Scale examination. Brain MRI demonstrated cortical atrophy with enlargement of the subarachnoid spaces and ventricular dilatation (Figure 2). Brainstem evoked potentials showed moderate abnormalities. Electroencephalography (EEG) showed abnormal sleep EEG.";
-		String content = "molecular diagnostics of the gene. He denies synophrys.";
-		List<ParsingResults> results=rbp.parse(rbp, content,false,true);
+//		String content=FileUtil.Readfile(args[0]);
+		String content = "He denies synophrys. Individual II-1 is a 10 year old boy. He was born at term with normal birth parameters and good APGAR scores (9/10/10). The neonatal period was uneventful, and he had normal motor development during early childhood: he began to look up at 3 months, sit by himself at 5 months, stand up at 11 months, walk at 13 months, and speak at 17 months. He attended a regular kindergarten, without any signs of difference in intelligence, compared to his peers. Starting at age 6, the parents observed ever increasing behavioral disturbance for the boy, manifesting in multiple aspects of life. For example, he can no longer wear clothes by himself, cannot obey instruction from parents/teachers, can no longer hold subjects tightly in hand, which were all things that he could do before 6 years of age. In addition, he no longer liked to play with others; instead, he just preferred to stay by himself, and he sometimes fell down when he walked on the stairs, which had rarely happened at age 5. The proband continued to deteriorate: at age 9, he could not say a single word and had no action or response to any instruction given in clinical exams. Additionally, rough facial features were noted with a flat nasal bridge, a synophrys (unibrow), a long and smooth philtrum, thick lips and an enlarged mouth. He also had rib edge eversion, and it was also discovered that he was profoundly deaf and had completely lost the ability to speak. He also had loss of bladder control. The diagnosis of severe intellectual disability was made, based on Wechsler Intelligence Scale examination. Brain MRI demonstrated cortical atrophy with enlargement of the subarachnoid spaces and ventricular dilatation (Figure 2). Brainstem evoked potentials showed moderate abnormalities. Electroencephalography (EEG) showed abnormal sleep EEG.";
+//		String content = "molecular diagnostics of the gene. He denies synophrys.";
+		List<ParsingResults> results=rbp.parse(rbp, content,false,false);
+//		for (ParsingResults result:results) {
+//			System.out.println(result.getHpoName());
+//		}
+		System.out.println(JSON.toJSONString(results, true));
 
 //		FileUtil.write2File(args[1], results);
 
