@@ -24,3 +24,5 @@ public_mm_lite_3.6.2rc3_binaryonly.zip
 .vscode/settings.json
 .settings/org.eclipse.jdt.core.prefs
 test.txt
+/downloads/
+/test.txt.json
