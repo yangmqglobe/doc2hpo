@@ -6,7 +6,9 @@ import edu.columbia.dbmi.doc2hpo.service.ACTrieParser;
 import edu.columbia.dbmi.doc2hpo.util.FileUtil;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
@@ -68,15 +70,27 @@ public class PMC2HPO {
             }
         });
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(args[1]), args[2])) {
-            stream.forEach(path -> {
-                try {
-                    queue.put(path.toString());
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+        final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + args[2]);
+
+        Files.walkFileTree(Paths.get(args[1]), new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
+                if (pathMatcher.matches(path)) {
+                    System.out.println("found: " + path.toString());
+                    try {
+                        queue.put(path.toString());
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                 }
-            });
-        }
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                return FileVisitResult.CONTINUE;
+            }
+        });
 
         Collections.nCopies(processNum, ParseWorker.PoisonPill).forEach(p -> {
             try {
