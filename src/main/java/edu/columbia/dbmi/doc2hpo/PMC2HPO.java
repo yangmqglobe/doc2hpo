@@ -45,7 +45,7 @@ class ParseWorker extends Thread {
                     continue;
                 }
 
-                if (null != results){
+                if (null != results && results.size() > 0){
                     FileUtil.write2File(path + ".json", JSON.toJSONString(results));
                 }
             }
